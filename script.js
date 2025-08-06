@@ -1,7 +1,4 @@
-/**
- * @TODO get a reference to the Firebase Database object
- */
-
+const database = firebase.database().ref();
 /**
  * @TODO get const references to the following elements:
  *      - div with id #all-messages
@@ -10,6 +7,14 @@
  *      - button with id #send-btn and the updateDB
  *        function as an onclick event handler
  */
+
+const allMessages = document.querySelector('#all-messages');
+const usernameElem = document.getElementById('username');
+const messageElem = document.getElementById('message');
+const emailElem = document.getElementById('email')
+const sendBtn = document.getElementById('send-btn');
+
+
 
 /**
  * @TODO create a function called updateDB which takes
@@ -22,13 +27,21 @@
  *      - resets the value of #message input element
  */
 
+sendBtn.onclick = updateDB
+
 function updateDB(event) {
-  // Prevent default refresh
-  // Create data object
-  // console.log the object
-  // GET *PUSH* PUT DELETE
-  // Write to our database
-  // Reset message
+  event.preventDefault();
+  let timedata = new Date();
+  console.log(timedata)
+  let data = {
+    USERNAME: usernameElem.value,
+    EMAIL: emailElem.value,
+    MESSAGE: messageElem.value,
+    DATE: `${timedata.getMonth() + 1}/${timedata.getDate()}/${timedata.getFullYear()}`,
+    TIME: `${timedata.getHours()}:${timedata.getMinutes()}:${timedata.getSeconds()}`
+  };
+  database.push(data)
+  messageElem.value = "";
 }
 
 /**
@@ -36,6 +49,8 @@ function updateDB(event) {
  * handler for the "child_added" event on the database
  * object
  */
+
+database.on('child_added', addMessageToBoard)
 
 /**
  * @TODO create a function called addMessageToBoard that
@@ -54,6 +69,9 @@ function addMessageToBoard(rowData) {
   // Create a variable named singleMessage
   // that stores function call for makeSingleMessageHTML()
   // Append the new message HTML element to allMessages
+  const data = rowData.val()
+  let singleMessage = makeSingleMessageHTML(data.USERNAME, data.EMAIL, data.MESSAGE, data.DATE, data.TIME);
+  allMessages.append(singleMessage)
 }
 
 /**
@@ -74,13 +92,37 @@ function addMessageToBoard(rowData) {
  *      - returns the parent div
  */
 
-function makeSingleMessageHTML(usernameTxt, messageTxt) {
-  // Create Parent Div
-  // Add Class name .single-message
-  // Create Username P Tag
-  // Append username
-  // Create message P Tag
-  // Return Parent Div
+function makeSingleMessageHTML(usernameTxt, emailTxt, messageTxt, dateTxt, timeTxt) {
+  let parentDiv = document.createElement("div")
+  parentDiv.className = 'single-message'
+
+
+  let usernameP = document.createElement("p")
+  usernameP.className = 'single-message-username'
+  usernameP.innerHTML = usernameTxt + ':'
+  parentDiv.append(usernameP)
+
+  let emailP = document.createElement('p')
+  emailP.className = "single-message-email"
+  emailP.innerHTML = emailTxt
+  parentDiv.append(emailP)
+
+  let messageP = document.createElement("p")
+  messageP.innerHTML = messageTxt
+  parentDiv.append(messageP)
+
+  let dateP = document.createElement('p')
+  dateP.className = "single-message-date"
+  dateP.innerHTML = dateTxt
+  parentDiv.append(dateP)
+
+  let timeP = document.createElement('p')
+  timeP.className = "single-message-time"
+  timeP.innerHTML = timeTxt
+  parentDiv.append(timeP)
+
+
+  return parentDiv;
 }
 
 /**
