@@ -13,8 +13,7 @@ const usernameElem = document.getElementById('username');
 const messageElem = document.getElementById('message');
 const emailElem = document.getElementById('email')
 const sendBtn = document.getElementById('send-btn');
-
-
+const imgElem = document.getElementById('profile')
 
 /**
  * @TODO create a function called updateDB which takes
@@ -30,16 +29,33 @@ const sendBtn = document.getElementById('send-btn');
 sendBtn.onclick = updateDB
 
 function updateDB(event) {
+
   event.preventDefault();
+
   let timedata = new Date();
-  console.log(timedata)
-  let data = {
-    USERNAME: usernameElem.value,
-    EMAIL: emailElem.value,
-    MESSAGE: messageElem.value,
-    DATE: `${timedata.getMonth() + 1}/${timedata.getDate()}/${timedata.getFullYear()}`,
-    TIME: `${timedata.getHours()}:${timedata.getMinutes()}:${timedata.getSeconds()}`
-  };
+
+  let data;
+
+  if (imgElem.value != "") {
+    data = {
+      USERNAME: usernameElem.value,
+      EMAIL: emailElem.value,
+      MESSAGE: messageElem.value,
+      DATE: `${timedata.getMonth() + 1}/${timedata.getDate()}/${timedata.getFullYear()}`,
+      TIME: `${timedata.getHours()}:${timedata.getMinutes()}:${timedata.getSeconds()}`,
+      IMG: imgElem.value
+    };
+  } else {
+    data = {
+      USERNAME: usernameElem.value,
+      EMAIL: emailElem.value,
+      MESSAGE: messageElem.value,
+      DATE: `${timedata.getMonth() + 1}/${timedata.getDate()}/${timedata.getFullYear()}`,
+      TIME: `${timedata.getHours()}:${timedata.getMinutes()}:${timedata.getSeconds()}`,
+      IMG: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'
+    };
+  }
+
   database.push(data)
   messageElem.value = "";
 }
@@ -70,7 +86,7 @@ function addMessageToBoard(rowData) {
   // that stores function call for makeSingleMessageHTML()
   // Append the new message HTML element to allMessages
   const data = rowData.val()
-  let singleMessage = makeSingleMessageHTML(data.USERNAME, data.EMAIL, data.MESSAGE, data.DATE, data.TIME);
+  let singleMessage = makeSingleMessageHTML(data.USERNAME, data.EMAIL, data.MESSAGE, data.DATE, data.TIME, data.IMG);
   allMessages.append(singleMessage)
 }
 
@@ -92,34 +108,38 @@ function addMessageToBoard(rowData) {
  *      - returns the parent div
  */
 
-function makeSingleMessageHTML(usernameTxt, emailTxt, messageTxt, dateTxt, timeTxt) {
+function makeSingleMessageHTML(usernameTxt, emailTxt, messageTxt, dateTxt, timeTxt, imgSrc) {
   let parentDiv = document.createElement("div")
   parentDiv.className = 'single-message'
 
+  let image = document.createElement("img");
+  image.className = "single-message-img";
+  image.src = imgSrc;
+  parentDiv.append(image);
 
-  let usernameP = document.createElement("p")
-  usernameP.className = 'single-message-username'
-  usernameP.innerHTML = usernameTxt + ':'
-  parentDiv.append(usernameP)
+  let usernameP = document.createElement("p");
+  usernameP.className = 'single-message-username';
+  usernameP.innerHTML = usernameTxt + ':';
+  parentDiv.append(usernameP);
 
-  let emailP = document.createElement('p')
-  emailP.className = "single-message-email"
-  emailP.innerHTML = emailTxt
-  parentDiv.append(emailP)
+  let emailP = document.createElement('p');
+  emailP.className = "single-message-email";
+  emailP.innerHTML = emailTxt;
+  parentDiv.append(emailP);
 
-  let messageP = document.createElement("p")
-  messageP.innerHTML = messageTxt
-  parentDiv.append(messageP)
+  let messageP = document.createElement("p");
+  messageP.innerHTML = messageTxt;
+  parentDiv.append(messageP);
 
-  let dateP = document.createElement('p')
-  dateP.className = "single-message-date"
-  dateP.innerHTML = dateTxt
-  parentDiv.append(dateP)
+  let dateP = document.createElement('p');
+  dateP.className = "single-message-date";
+  dateP.innerHTML = dateTxt;
+  parentDiv.append(dateP);
 
-  let timeP = document.createElement('p')
-  timeP.className = "single-message-time"
-  timeP.innerHTML = timeTxt
-  parentDiv.append(timeP)
+  let timeP = document.createElement('p');
+  timeP.className = "single-message-time";
+  timeP.innerHTML = timeTxt;
+  parentDiv.append(timeP);
 
 
   return parentDiv;
